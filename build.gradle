@@ -25,6 +25,11 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'javax.validation:validation-api:2.0.1.Final'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	// jwt apis
+	implementation 'io.jsonwebtoken:jjwt-api:0.10.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.10.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.10.5'
+
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'mysql:mysql-connector-java'
 	annotationProcessor 'org.projectlombok:lombok'
