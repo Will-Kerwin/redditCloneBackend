@@ -1,5 +1,7 @@
 package co.uk.itskerwin.redditClone.security;
 
+import co.uk.itskerwin.redditClone.exception.SpringRedditException;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -53,4 +55,27 @@ public class JwtProvider {
             throw new SpringRedditException("Exception occurred while retrieving public key from keystore");
         }
     }*/
+
+    public boolean validateToken(String jwt) {
+        Jwts.parser().setSigningKey(key).parseClaimsJws(jwt);
+        return true;
+    }
+
+    // used for getting public key but need to work out jks first
+    /*private PublicKey getPublicKey(){
+        try{
+            return keyStore.getCertificate("springBlog").getPublicKey();
+        } catch (KeyStoreException e) {
+            throw new SpringRedditException("Exception occurred while retrieving public key");
+        }
+    }*/
+
+    public String getUsernameFromJwt(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(key)
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.getSubject();
+    }
 }
