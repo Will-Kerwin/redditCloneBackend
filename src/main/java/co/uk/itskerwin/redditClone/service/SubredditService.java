@@ -1,6 +1,8 @@
 package co.uk.itskerwin.redditClone.service;
 
 import co.uk.itskerwin.redditClone.dto.SubredditDto;
+import co.uk.itskerwin.redditClone.exception.SpringRedditException;
+import co.uk.itskerwin.redditClone.mapper.SubredditMapper;
 import co.uk.itskerwin.redditClone.model.Subreddit;
 import co.uk.itskerwin.redditClone.repository.SubredditRepository;
 import lombok.AllArgsConstructor;
@@ -18,11 +20,12 @@ import static java.util.stream.Collectors.toList;
 public class SubredditService {
 
     private final SubredditRepository subredditRepository;
+    private final SubredditMapper subredditMapper;
 
     // saves to databse
     @Transactional
     public SubredditDto save(SubredditDto subredditDto){
-        Subreddit save = subredditRepository.save(mapSubredditDto(subredditDto));
+        Subreddit save = subredditRepository.save(subredditMapper.mapDtoToSubreddit(subredditDto));
         subredditDto.setId(save.getId());
         log.info(save.getName());
         return subredditDto;
@@ -31,23 +34,13 @@ public class SubredditService {
 
     @Transactional(readOnly = true)
     public List<SubredditDto> getAll() {
-        return subredditRepository.findAll().stream().map(this::mapToDto).collect(toList());
+        return subredditRepository.findAll().stream().map(subredditMapper::mapSubredditToDto).collect(toList());
     }
 
-    private SubredditDto mapToDto(Subreddit subreddit) {
-        SubredditDto dto = SubredditDto.builder().name(subreddit.getName())
-                .id(subreddit.getId())
-                .numberOfPosts(subreddit.getPosts().size())
-                .build();
-        log.info(dto.toString());
-        return dto;
+    // finds by id from database and returns a mapped dto
+    public SubredditDto getSubreddit(Long id) {
+        Subreddit subreddit = subredditRepository.findById(id)
+                .orElseThrow(()-> new SpringRedditException("No subreddit found with this id"));
+        return subredditMapper.mapSubredditToDto(subreddit);
     }
-
-    private Subreddit mapSubredditDto(SubredditDto subredditDto) {
-        return Subreddit.builder().name(subredditDto.getName())
-                .description(subredditDto.getDescription())
-                .build();
-    }
-
-
 }

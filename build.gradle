@@ -30,6 +30,10 @@ dependencies {
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.10.5'
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.10.5'
 
+	// mapstruct for object to dto
+	implementation 'org.mapstruct:mapstruct:1.4.1.Final'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.1.Final'
+	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.1.0'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'mysql:mysql-connector-java'
 	annotationProcessor 'org.projectlombok:lombok'
