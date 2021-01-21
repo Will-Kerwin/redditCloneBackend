@@ -16,6 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,7 @@ import java.util.UUID;
 @Service
 // All args does constructor injection
 @AllArgsConstructor
+@Transactional
 public class AuthService {
 
     // Auto wired not recommended use constructor injection instead
@@ -40,7 +42,6 @@ public class AuthService {
     private final JwtProvider jwtProvider;
 
     // annotation used when interacting with database
-    @Transactional
     public void signup(RegisterRequest registerRequest) {
         User user = new User();
         user.setUsername(registerRequest.getUsername());
@@ -58,6 +59,13 @@ public class AuthService {
                         "please click on the below url to activate your account: " +
                         "http://localhost:8080/api/auth/accountVerification/" +
                         token));
+    }
+
+    public User getCurrentUser(){
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
+        return userRepository.findByUsername(principal.getUsername())
+                .orElseThrow(()-> new UsernameNotFoundException("User name not found "+ principal.getUsername()));
     }
 
     private String generateVerificationToken(User user) {
@@ -82,8 +90,6 @@ public class AuthService {
         fetchUserAndEnable(verificationToken.get());
     }
 
-    // interacts with database
-    @Transactional
     private void fetchUserAndEnable(VerificationToken verificationToken) {
         String username = verificationToken.getUser().getUsername();
         User user = userRepository.findByUsername(username).orElseThrow(() ->
