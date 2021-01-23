@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class MailService {
 
     private final JavaMailSender mailSender;
-    private final MainContentBuilder mainContentBuilder;
+    private final MailContentBuilder mainContentBuilder;
 
     @Async
     public void sendMail(NotificationEmail notificationEmail){
@@ -34,7 +34,7 @@ public class MailService {
 
         try {
             mailSender.send(messagePreparator);
-            log.info("Activation Email sent!!");
+            log.info("Email sent!!");
         } catch (MailException e){
             throw new SpringRedditException("Exception occured when sending mail to " + notificationEmail.getRecipient());
         }
