@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.4.2'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id "org.jetbrains.kotlin.jvm" version "1.4.21"
 }
 
 group = 'co.uk.itskerwin'
@@ -25,6 +26,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'javax.validation:validation-api:2.0.1.Final'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	//time ago
+	implementation 'com.github.marlonlom:timeago:4.0.0'
+	implementation 'org.jetbrains.kotlin:kotlin-test-junit'
 	// jwt apis
 	implementation 'io.jsonwebtoken:jjwt-api:0.10.5'
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.10.5'
@@ -39,8 +43,10 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 test {
 	useJUnitPlatform()
+
 }
