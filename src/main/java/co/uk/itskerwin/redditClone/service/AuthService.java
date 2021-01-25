@@ -3,6 +3,7 @@ package co.uk.itskerwin.redditClone.service;
 
 import co.uk.itskerwin.redditClone.dto.AuthenticationResponse;
 import co.uk.itskerwin.redditClone.dto.LoginRequest;
+import co.uk.itskerwin.redditClone.dto.RefreshTokenRequest;
 import co.uk.itskerwin.redditClone.dto.RegisterRequest;
 import co.uk.itskerwin.redditClone.exception.SpringRedditException;
 import co.uk.itskerwin.redditClone.model.NotificationEmail;
@@ -40,6 +41,7 @@ public class AuthService {
     private final MailService mailService;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
+    private final RefreshTokenService refreshTokenService;
 
     // annotation used when interacting with database
     public void signup(RegisterRequest registerRequest) {
@@ -107,8 +109,23 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authenticate);
         String token = jwtProvider.generateToken(authenticate);
         // returns a new data transfer object
-        return new AuthenticationResponse(token, loginRequest.getUsername());
-
-
+        return AuthenticationResponse.builder()
+                .authenticationToken(token)
+                .refreshToken(refreshTokenService.generateRefreshToken().getToken())
+                .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
+                .username(loginRequest.getUsername())
+                .build();
     }
+
+    public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest){
+        refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());
+        String token = jwtProvider.generateTokenWithUsername(refreshTokenRequest.getUsername());
+        return AuthenticationResponse.builder()
+                .authenticationToken(token)
+                .refreshToken("")
+                .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
+                .username(refreshTokenRequest.getUsername())
+                .build();
+    }
+
 }

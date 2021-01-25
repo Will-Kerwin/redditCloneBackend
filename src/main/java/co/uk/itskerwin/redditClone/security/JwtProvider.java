@@ -1,11 +1,11 @@
 package co.uk.itskerwin.redditClone.security;
 
-import co.uk.itskerwin.redditClone.exception.SpringRedditException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 
 import org.springframework.security.core.userdetails.User;
@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.security.*;
+import java.time.Instant;
+import java.util.Date;
 
 @Service
 @Slf4j
@@ -20,6 +22,8 @@ public class JwtProvider {
 
     //private KeyStore keyStore;
     private Key key;
+    @Value("${jwt.expiration.time}")
+    private Long jwtExpirationInMillis;
 
     @PostConstruct
     public void init() {
@@ -41,6 +45,17 @@ public class JwtProvider {
                 .setSubject(principal.getUsername())
                 //.signWith(getPrivateKey())
                 .signWith(key)
+                .setExpiration(Date.from(Instant.now().plusMillis(jwtExpirationInMillis)))
+                .compact();
+    }
+
+    public String generateTokenWithUsername(String username) {
+        return Jwts
+                .builder()
+                .setSubject(username)
+                //.signWith(getPrivateKey())
+                .signWith(key)
+                .setExpiration(Date.from(Instant.now().plusMillis(jwtExpirationInMillis)))
                 .compact();
     }
 
@@ -77,5 +92,9 @@ public class JwtProvider {
                 .getBody();
 
         return claims.getSubject();
+    }
+
+    public Long getJwtExpirationInMillis(){
+        return jwtExpirationInMillis;
     }
 }
