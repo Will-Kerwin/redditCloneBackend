@@ -26,12 +26,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean(BeanIds.AUTHENTICATION_MANAGER)
     @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception{
+    public AuthenticationManager authenticationManagerBean() {
         return super.authenticationManagerBean();
     }
 
     @Override
-    public void configure(HttpSecurity httpSecurity) throws Exception {
+    public void configure(HttpSecurity httpSecurity) {
         httpSecurity.cors().and()
                 .csrf().disable()
                 .authorizeRequests()
