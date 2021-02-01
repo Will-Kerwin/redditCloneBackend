@@ -31,7 +31,7 @@ public class PostController {
         return status(HttpStatus.OK).body(postService.getPost(id));
     }
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<List<PostResponse>> getAllPosts(){
         return status(HttpStatus.OK).body(postService.getAllPosts());
     }
