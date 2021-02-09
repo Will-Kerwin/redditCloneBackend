@@ -25,7 +25,7 @@ public class MailService {
         MimeMessagePreparator messagePreparator = mimeMessage -> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
             // hardcode the email not advised but due to being fake smtp its ok
-            messageHelper.setFrom("springreddit@email.com");
+            messageHelper.setFrom("dev@itskerwin.co.uk");
             messageHelper.setTo(notificationEmail.getRecipient());
             messageHelper.setSubject(notificationEmail.getSubject());
             // calling build method of mailcontenet builder returning in html format
